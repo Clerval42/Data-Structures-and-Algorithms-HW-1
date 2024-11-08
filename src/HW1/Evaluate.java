@@ -4,93 +4,101 @@ import java.util.Stack;
 
 public class Evaluate {
 
-    static int precedence(String operator) {
+    static int precedence(char operator) {
         return switch (operator) {
-            case "+", "-" ->
-                1;
-            case "*", "/" ->
-                2;
-            default ->
-                -1;
+            case '+', '-' -> 1;
+            case '*', '/' -> 2;
+            default -> -1;
         };
     }
 
-    // Fill the method and return the value
     static String infixToPostfix(String expression) {
-        /// Find the precedence
-        // Do not forget to delete return "" statement
         String postfix = "";
-        String currentNumber = "";
-        Stack<String> stack = new Stack<>();
-        for (char i : expression.toCharArray()) {
+        Stack<Character> stack = new Stack<>();
+        StringBuilder currentNumber = new StringBuilder();
 
-            if (Character.isDigit(i)) {
-                currentNumber += Character.getNumericValue(i);
-            }else if(i == ' '&& !"".equals(currentNumber)){ 
-                stack.push(currentNumber);
-                currentNumber = "";
-            } else if (i == '(') { // If the character is (
-                stack.push(String.valueOf(i));
-            } else if (i == ')') { // If the character is )
-                while (!stack.isEmpty() && stack.contains("("))  { // Pop until ( and )
-                    postfix += stack.pop();
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+
+            if (Character.isDigit(c)) {
+                currentNumber.append(c);
+                // If it's last character or next is not digit, add the number
+                if (i == expression.length() - 1 || !Character.isDigit(expression.charAt(i + 1))) {
+                    postfix += currentNumber.toString();
+                    postfix += " ";
+                    currentNumber.setLength(0);
                 }
-                stack.pop();
-
-            } else if (i == '+' || i == '-' || i == '*' || i == '/') { // If the character is +,-,*,/
-                postfix += " ";
-
-                while (!stack.isEmpty() && precedence(String.valueOf(i)) <= precedence(stack.peek())) {
+            } else if (c == '(') {
+                stack.push(c);
+            } else if (c == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
                     postfix += stack.pop();
                     postfix += " ";
-
                 }
-                stack.push(String.valueOf(i));
+                stack.pop();
+            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                while (!stack.isEmpty() && stack.peek() != '(' && 
+                       precedence(c) <= precedence(stack.peek())) {
+                    postfix += stack.pop();
+                    postfix += " ";
+                }
+                stack.push(c);
             }
         }
+
         while (!stack.isEmpty()) {
-            postfix += " ";
-            postfix += stack.pop();
+            if (stack.peek() != '(') {
+                postfix += stack.pop();
+                postfix += " ";
+            } else {
+                stack.pop();
+            }
         }
-        return postfix;
+
+        return postfix.trim();
     }
 
-    // Fill the method and return the value
     static int evaluatePostfixExpression(String expression) {
-        //Do not forget to delete return 0 statement
         Stack<Integer> stack = new Stack<>();
-        String currentNumber = "";
-        for (char i : expression.toCharArray()) {
-            
-            if (Character.isDigit(i)) {
-                currentNumber += Character.getNumericValue(i);
+        StringBuilder currentNumber = new StringBuilder();
 
-            }else if(i == ' '&& !"".equals(currentNumber)){ 
-                stack.push(Integer.valueOf(currentNumber));
-                currentNumber = "";
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
 
+            if (Character.isDigit(c)) {
+                currentNumber.append(c);
+            } else if (c == ' ' && currentNumber.length() > 0) {
+                stack.push(Integer.valueOf(currentNumber.toString()));
+                currentNumber.setLength(0);
+            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                if (stack.size() >= 2) {
+                    int b = stack.pop();
+                    int a = stack.pop();
 
-            }else if (precedence(String.valueOf(i)) > 0) {
-                if(stack.size()>=0){
-                    int a = Character.getNumericValue(stack.pop());
-                    int b = Character.getNumericValue(stack.pop());
-    
-                    switch (i) {
-                        case '+' ->
-                            stack.push(a + b);
-                        case '-' ->
-                            stack.push(a - b);
-                        case '*' ->
-                            stack.push(a * b);
-                        case '/' ->
-                            stack.push(a / b);
+                    switch (c) {
+                        case '+' -> stack.push(a + b);
+                        case '-' -> stack.push(a - b);
+                        case '*' -> stack.push(a * b);
+                        case '/' -> stack.push(a / b);
                     }
                 }
-                
             }
-            
         }
-        return stack.pop();
-                
+
+        // Handle any remaining number at the end
+        if (currentNumber.length() > 0) {
+            stack.push(Integer.valueOf(currentNumber.toString()));
+        }
+
+        return stack.isEmpty() ? 0 : stack.pop();
+    }
+
+    public static void main(String[] args) {
+        // Test the implementation
+        String expression = "20+2*3+(2*8+5)*4";
+        String postfix = infixToPostfix(expression);
+        System.out.println("Infix: " + expression);
+        System.out.println("Postfix: " + postfix);
+        System.out.println("Result: " + evaluatePostfixExpression(postfix));
     }
 }
