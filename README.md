@@ -1,5 +1,16 @@
-This project was made for Eskişehir Technical University CS course Data Structures and Algorithms Homework 1: Application of Stacks: Expression Evaluator
+# 🚀 The Most Amazing Project Ever Created!
 
-To show how to evaluate aritmatic expressions that contain basic operations (+,-,*,/) and parentheses, to postfix(reverse polish notation) and using stack to calculate the given expression
+## What is this sorcery? 🧙‍♂️
 
-*made by Mert Can Kalınlıoğlu
+This is not just another project - it's a game-changer, a revolution, a slice of pure awesomeness wrapped in code!
+
+## Features ✨
+
+- Does cool things (like, really cool)
+- Makes your life easier (probably)
+- Works 60% of the time, every time!
+- Zero bugs\*
+
+\*Results may vary. Bugs are actually features in disguise.
+
+## Installation 🛠️
