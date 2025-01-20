@@ -1,29 +1,34 @@
-package HW1;
+package com.example;
 
 import java.util.Stack;
 
 public class Evaluate {
-    
+
     /**
      * Determines the precedence of operators
      * Higher number means higher precedence
      */
-    static int precedence(char operator) {
-        return switch (operator) {
-            case '+', '-' -> 1;
-            case '*', '/' -> 2;
-            default -> -1;
-        };
+    private static int precedence(char operator) {
+        switch (operator) {
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            default:
+                return -1;
+        }
     }
 
     /**
      * Converts an infix expression to postfix notation
      * Example: "2+3*4" becomes "2 3 4 * +"
      */
-    static String infixToPostfix(String expression) {
-        String postfix = "";  // Will store the final postfix expression
-        Stack<Character> stack = new Stack<>();  // Stack for operators
-        StringBuilder currentNumber = new StringBuilder();  // For building multi-digit numbers
+    public static String infixToPostfix(String expression) {
+        String postfix = ""; // Will store the final postfix expression
+        Stack<Character> stack = new Stack<>(); // Stack for operators
+        StringBuilder currentNumber = new StringBuilder(); // For building multi-digit numbers
 
         // Process each character in the expression
         for (int i = 0; i < expression.length(); i++) {
@@ -35,8 +40,8 @@ public class Evaluate {
                 // If it's last character or next is not digit, add the complete number
                 if (i == expression.length() - 1 || !Character.isDigit(expression.charAt(i + 1))) {
                     postfix += currentNumber.toString();
-                    postfix += " ";  // Add space after number
-                    currentNumber.setLength(0);  // Reset for next number
+                    postfix += " "; // Add space after number
+                    currentNumber.setLength(0); // Reset for next number
                 }
             }
             // If opening parenthesis, push to stack
@@ -49,17 +54,17 @@ public class Evaluate {
                     postfix += stack.pop();
                     postfix += " ";
                 }
-                stack.pop();  // Remove the opening parenthesis
+                stack.pop(); // Remove the opening parenthesis
             }
             // If operator (+, -, *, /)
             else if (precedence(c) >= 0) {
                 // Pop operators with higher or equal precedence
-                while (!stack.isEmpty() && stack.peek() != '(' && 
-                       precedence(c) <= precedence(stack.peek())) {
+                while (!stack.isEmpty() && stack.peek() != '(' &&
+                        precedence(c) <= precedence(stack.peek())) {
                     postfix += stack.pop();
                     postfix += " ";
                 }
-                stack.push(c);  // Push current operator
+                stack.push(c); // Push current operator
             }
         }
 
@@ -73,16 +78,16 @@ public class Evaluate {
             }
         }
 
-        return postfix.trim();  // Remove trailing spaces
+        return postfix.trim(); // Remove trailing spaces
     }
 
     /**
      * Evaluates a postfix expression and returns the result
      * Example: "2 3 4 * +" evaluates to 14
      */
-    static int evaluatePostfixExpression(String expression) {
-        Stack<Integer> stack = new Stack<>();  // Stack for operands
-        StringBuilder currentNumber = new StringBuilder();  // For building multi-digit numbers
+    public static int evaluatePostfixExpression(String expression) {
+        Stack<Integer> stack = new Stack<>(); // Stack for operands
+        StringBuilder currentNumber = new StringBuilder(); // For building multi-digit numbers
 
         // Process each character in the expression
         for (int i = 0; i < expression.length(); i++) {
@@ -95,7 +100,7 @@ public class Evaluate {
             // If space and we have collected digits, convert to number and push to stack
             else if (c == ' ' && currentNumber.length() > 0) {
                 stack.push(Integer.valueOf(currentNumber.toString()));
-                currentNumber.setLength(0);  // Reset for next number
+                currentNumber.setLength(0); // Reset for next number
             }
             // If operator, perform operation on top two numbers in stack
             else if (precedence(c) >= 0) {
@@ -105,10 +110,18 @@ public class Evaluate {
 
                     // Perform the operation and push result back to stack
                     switch (c) {
-                        case '+' -> stack.push(a + b);
-                        case '-' -> stack.push(a - b);
-                        case '*' -> stack.push(a * b);
-                        case '/' -> stack.push(a / b);
+                        case '+':
+                            stack.push(a + b);
+                            break;
+                        case '-':
+                            stack.push(a - b);
+                            break;
+                        case '*':
+                            stack.push(a * b);
+                            break;
+                        case '/':
+                            stack.push(a / b);
+                            break;
                     }
                 }
             }
@@ -119,6 +132,6 @@ public class Evaluate {
             stack.push(Integer.valueOf(currentNumber.toString()));
         }
 
-        return stack.pop();  // Return final result
+        return stack.pop(); // Return final result
     }
 }
